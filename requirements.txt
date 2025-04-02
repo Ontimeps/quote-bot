@@ -1,0 +1,9 @@
+flask
+flask-cors
+openai
+twilio
+google-api-python-client
+google-auth
+google-auth-oauthlib
+python-dotenv
+pandas
