@@ -30,10 +30,17 @@ twilio_client = Client(
 )
 
 # Gmail API setup
+import base64
+
+# Decode base64-encoded credentials from environment
+creds_dict = json.loads(base64.b64decode(os.getenv("GOOGLE_CREDENTIALS_B64")).decode("utf-8"))
+
+# Use decoded credentials for Gmail API
 creds = service_account.Credentials.from_service_account_info(
-    json.loads(os.getenv("GOOGLE_CREDENTIALS_JSON")),
+    creds_dict,
     scopes=["https://www.googleapis.com/auth/gmail.send"]
 )
+
 gmail_service = build("gmail", "v1", credentials=creds)
 
 # Admin token
