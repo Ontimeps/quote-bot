@@ -1,0 +1,10 @@
+# Ignore secret and config files
+*.json
+*.env
+quotes.db
+
+# Allow required data file
+!large_format_price_sheet_shopvox.csv
+
+# Ignore VSCode settings
+.vscode/
