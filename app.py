@@ -21,10 +21,9 @@ def index():
 # Chatbot /quote API
 @app.route("/quote", methods=["POST"])
 def get_quote():
-    data = request.get_json()
+    data = request.get_json() or {}
     name = data.get("name", "there")
     message = data.get("message", "")
-
     response = f"Hey {name}, here's a quote based on your message: {message}"
     return jsonify({"response": response, "email_status": "success"})
 
@@ -48,23 +47,27 @@ def admin_login():
 # Login POST route
 @app.route("/admin/authenticate", methods=["POST"])
 def admin_authenticate():
-    username = request.form.get("username")
-    password = request.form.get("password")
-
+    username = request.form.get("username", "")
+    password = request.form.get("password", "")
     if username == "admin" and password == "password123":
         session["user"] = username
         return redirect(url_for("admin_dashboard"))
-    else:
-        return "Login failed. Try again.", 401
+    return "Login failed. Try again.", 401
 
 # Protected dashboard
 @app.route("/admin/dashboard")
 def admin_dashboard():
-    if "user" in session:
+    if session.get("user") == "admin":
         return f"<h2>Welcome to the admin dashboard, {session['user']}!</h2>"
     return redirect(url_for("admin_login"))
 
-# Favicon
+# Logout to clear the session
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("user", None)
+    return redirect(url_for("admin_login"))
+
+# Favicon handler
 @app.route("/favicon.ico")
 def favicon():
     return send_from_directory(
@@ -77,13 +80,3 @@ def favicon():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
-
-
-@app.route("/admin/logout")
-def admin_logout():
-    session.pop("user", None)
-    return redirect(url_for("admin_login"))
-@app.route("/admin/logout")
-def admin_logout():
-    session.pop("user", None)
-    return redirect(url_for("admin_login"))
