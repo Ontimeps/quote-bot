@@ -83,3 +83,7 @@ if __name__ == "__main__":
 def admin_logout():
     session.pop("user", None)
     return redirect(url_for("admin_login"))
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("user", None)
+    return redirect(url_for("admin_login"))
