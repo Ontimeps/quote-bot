@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, request, jsonify, send_from_directory, render_template_string, redirect, url_for, session
+from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, session
 from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -30,7 +30,7 @@ def load_users():
 # Basic homepage
 @app.route("/")
 def index():
-    return "Quote Bot is running."
+    return render_template("index.html")
 
 # Chatbot /quote API
 @app.route("/quote", methods=["POST"])
@@ -44,19 +44,7 @@ def get_quote():
 # Admin login form
 @app.route("/admin/login")
 def admin_login():
-    return render_template_string("""
-        <html>
-        <head><title>Admin Login</title></head>
-        <body style="font-family:sans-serif;">
-            <h2>Admin Login</h2>
-            <form action="/admin/authenticate" method="post">
-                <input name="username" placeholder="Username" required><br><br>
-                <input name="password" type="password" placeholder="Password" required><br><br>
-                <button type="submit">Login</button>
-            </form>
-        </body>
-        </html>
-    """)
+    return render_template("login.html")
 
 # Authenticate against JSON user store
 @app.route("/admin/authenticate", methods=["POST"])
@@ -74,7 +62,7 @@ def admin_authenticate():
 @app.route("/admin/dashboard")
 def admin_dashboard():
     if session.get("user"):
-        return f"<h2>Welcome to the admin dashboard, {session['user']}!</h2>"
+        return render_template("dashboard.html", user=session["user"])
     return redirect(url_for("admin_login"))
 
 # Logout endpoint

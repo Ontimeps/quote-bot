@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Dashboard</title>
+  <style>body { font-family: sans-serif; padding: 1rem; }</style>
+</head>
+<body>
+  <h2>Welcome to the admin dashboard, {{ user }}!</h2>
+  <p><a href="{{ url_for('admin_logout') }}">Logout</a></p>
+</body>
+</html>
