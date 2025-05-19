@@ -79,3 +79,7 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=port, debug=True)
 
 
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("user", None)
+    return redirect(url_for("admin_login"))
