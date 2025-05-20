@@ -92,14 +92,3 @@ def employee_quote():
         # Here you could insert into your DB
         quote_text = f"Quote for {customer} ({contact}): Based on '{details}', we estimate $X,XXX."
     return render_template("employee_quote.html", quote=quote_text)
-# Employee-facing quote form
-@app.route("/employee/quote", methods=["GET", "POST"])
-def employee_quote():
-    quote_text = None
-    if request.method == "POST":
-        customer = request.form.get("customer", "Customer")
-        contact = request.form.get("contact", "")
-        details = request.form.get("details", "")
-        # TODO: integrate real pricing logic
-        quote_text = f"Quote for {customer} ({contact}): Based on '{details}', we estimate $X,XXX."
-    return render_template("employee_quote.html", quote=quote_text)
