@@ -1,9 +1,27 @@
-﻿import os
+import os
 import json
 import random
 from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, session
 from flask_cors import CORS
 from dotenv import load_dotenv
+import sqlite3
+from datetime import datetime
+
+# SQLite database initialization
+db_path = os.path.join(app.root_path, "quotes.db")
+conn = sqlite3.connect(db_path, check_same_thread=False)
+c = conn.cursor()
+c.execute(@"
+CREATE TABLE IF NOT EXISTS quotes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp TEXT,
+    customer TEXT,
+    contact TEXT,
+    details TEXT,
+    estimate TEXT
+)
+"@)
+conn.commit()
 from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
@@ -92,3 +110,8 @@ def employee_quote():
         # Here you could insert into your DB
         quote_text = f"Quote for {customer} ({contact}): Based on '{details}', we estimate $X,XXX."
     return render_template("employee_quote.html", quote=quote_text)
+@app.route("/employee/history")
+def employee_history():
+    c.execute("SELECT timestamp, customer, contact, details, estimate FROM quotes ORDER BY id DESC")
+    rows = c.fetchall()
+    return render_template("employee_history.html", quotes=rows)
