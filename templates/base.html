@@ -7,6 +7,11 @@
 </head>
 <body>
   <header>
+    <div class="logo">
+      <a href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="50">
+      </a>
+    </div>
     <h1><a href="{{ url_for('index') }}">Quote Bot</a></h1>
     {% if session.get('user') %}
       <nav>
@@ -17,6 +22,9 @@
   </header>
 
   <main>
+    {% if quote %}
+      <blockquote class="motivational">{{ quote }}</blockquote>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
 

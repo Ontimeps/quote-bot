@@ -1,6 +1,6 @@
-# app.py
 import os
 import json
+import random
 from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, session
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -21,9 +21,18 @@ def load_users():
     with open(USERS_FILE) as f:
         return json.load(f)
 
+quotes = [
+    "Your limitation—it’s only your imagination.",
+    "Push yourself, because no one else is going to do it for you.",
+    "Great things never come from comfort zones.",
+    "Dream it. Wish it. Do it.",
+    "Success doesn’t just find you. You have to go out and get it."
+]
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    quote = random.choice(quotes)
+    return render_template("index.html", quote=quote)
 
 @app.route("/quote", methods=["POST"])
 def get_quote():
@@ -53,7 +62,8 @@ def admin_authenticate():
 @app.route("/admin/dashboard")
 def admin_dashboard():
     if session.get("user"):
-        return render_template("dashboard.html", user=session["user"])
+        quote = random.choice(quotes)
+        return render_template("dashboard.html", user=session["user"], quote=quote)
     return redirect(url_for("admin_login"))
 
 @app.route("/admin/logout")
