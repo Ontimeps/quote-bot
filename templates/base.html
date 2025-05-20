@@ -1,35 +1,20 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{% block title %}{% endblock %} | Quote Bot</title>
+  <title>Quote Bot</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
   <header>
-    <div class="logo">
-      <a href="{{ url_for('index') }}">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" height="50">
-      </a>
-    </div>
-    <h1><a href="{{ url_for('index') }}">Quote Bot</a></h1>
-    {% if session.get('user') %}
-      <nav>
-        Logged in as {{ session.user }} |
-        <a href="{{ url_for('admin_logout') }}">Logout</a>
-      </nav>
-    {% endif %}
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+    <h1>Quote Bot</h1>
   </header>
-
   <main>
-    {% if quote %}
-      <blockquote class="motivational">{{ quote }}</blockquote>
-    {% endif %}
     {% block content %}{% endblock %}
   </main>
-
   <footer>
-    <small>&copy; 2025 Your Company</small>
+    &copy; {{ 2025 }} Quote Bot Inc.
   </footer>
 </body>
 </html>

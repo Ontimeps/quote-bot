@@ -1,88 +1,108 @@
-import os
-import json
-import random
-from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, session
-from flask_cors import CORS
-from dotenv import load_dotenv
+﻿import os
 import sqlite3
-from datetime import datetime
-
-# SQLite database initialization
-db_path = os.path.join(app.root_path, "quotes.db")
-conn = sqlite3.connect(db_path, check_same_thread=False)
-c = conn.cursor()
-c.execute(@"
-CREATE TABLE IF NOT EXISTS quotes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    timestamp TEXT,
-    customer TEXT,
-    contact TEXT,
-    details TEXT,
-    estimate TEXT
+from flask import (
+    Flask, request, jsonify, send_from_directory,
+    render_template, redirect, url_for, session
 )
-"@)
-conn.commit()
-from werkzeug.security import generate_password_hash, check_password_hash`r`nimport openai`r`n# Configure OpenAI API key`r`nopenai.api_key = os.getenv("OPENAI_API_KEY")
+from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
 
 load_dotenv()
-app = Flask(__name__)
+
+app = Flask(__name__, static_folder="static", template_folder="templates")
 CORS(app)
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "supersecretkey")
+app.secret_key = os.getenv("SECRET_KEY", "supersecretkey")
 
-USERS_FILE = os.path.join(app.root_path, "users.json")
+DB_PATH = os.path.join(app.root_path, "quote_bot.db")
 
-def load_users():
-    if not os.path.exists(USERS_FILE):
-        default_pass = os.getenv("ADMIN_PASSWORD", "password123")
-        with open(USERS_FILE, "w") as f:
-            json.dump({"admin": generate_password_hash(default_pass)}, f, indent=2)
-    with open(USERS_FILE) as f:
-        return json.load(f)
+def init_db():
+    if not os.path.exists(DB_PATH):
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("""
+            CREATE TABLE users (
+                id INTEGER PRIMARY KEY,
+                username TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL
+            );
+        """)
+        c.execute("""
+            CREATE TABLE quotes (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                email TEXT,
+                details TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+        c.execute("INSERT INTO users (username, password_hash) VALUES (?,?);",
+                  ("admin", generate_password_hash("password123")))
+        c.execute("INSERT INTO users (username, password_hash) VALUES (?,?);",
+                  ("garyclayton2006", generate_password_hash("OnTime2025@")))
+        conn.commit()
+        conn.close()
 
-quotes = [
-    "Your limitation - it's only your imagination.",
-    "Push yourself, because no one else is going to do it for you.",
-    "Great things never come from comfort zones.",
-    "Dream it. Wish it. Do it.",
-    "Success doesn't just find you. You have to go out and get it."
-]
+init_db()
 
 @app.route("/")
 def index():
-    quote = random.choice(quotes)
-    return render_template("index.html", quote=quote)
+    return render_template("index.html")
 
 @app.route("/quote", methods=["POST"])
 def get_quote():
-    data = request.get_json() or {}
+    data = request.get_json()
     name = data.get("name", "there")
     message = data.get("message", "")
-    return jsonify({
-        "response": f"Hey {name}, here's a quote based on your message: {message}",
-        "email_status": "success"
-    })
+    resp = f"Hey {name}, here's a quote based on your message: {message}"
+    return jsonify({"response": resp, "email_status": "success"})
 
-@app.route("/admin/login")
+@app.route("/employee/quote", methods=["GET", "POST"])
+def employee_quote():
+    if request.method == "POST":
+        name = request.form["name"]
+        email = request.form["email"]
+        details = request.form["details"]
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute(
+            "INSERT INTO quotes (name, email, details) VALUES (?,?,?);",
+            (name, email, details)
+        )
+        conn.commit()
+        conn.close()
+        return render_template("quote_submitted.html", name=name)
+    return render_template("employee_quote.html")
+
+@app.route("/admin/login", methods=["GET"])
 def admin_login():
     return render_template("login.html")
 
 @app.route("/admin/authenticate", methods=["POST"])
 def admin_authenticate():
-    users = load_users()
-    user = request.form.get("username", "")
-    pw = request.form.get("password", "")
-    pw_hash = users.get(user)
-    if pw_hash and check_password_hash(pw_hash, pw):
-        session["user"] = user
+    username = request.form["username"]
+    password = request.form["password"]
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT password_hash FROM users WHERE username = ?;", (username,))
+    row = c.fetchone()
+    conn.close()
+
+    if row and check_password_hash(row[0], password):
+        session["user"] = username
         return redirect(url_for("admin_dashboard"))
-    return "Login failed. Try again.", 401
+    return render_template("login.html", error="Invalid credentials"), 401
 
 @app.route("/admin/dashboard")
 def admin_dashboard():
-    if session.get("user"):
-        quote = random.choice(quotes)
-        return render_template("dashboard.html", user=session["user"], quote=quote)
-    return redirect(url_for("admin_login"))
+    if "user" not in session:
+        return redirect(url_for("admin_login"))
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT id, name, email, details, created_at FROM quotes ORDER BY created_at DESC;")
+    quotes = c.fetchall()
+    conn.close()
+    return render_template("dashboard.html", user=session["user"], quotes=quotes)
 
 @app.route("/admin/logout")
 def admin_logout():
@@ -93,25 +113,9 @@ def admin_logout():
 def favicon():
     return send_from_directory(
         os.path.join(app.root_path, "static"),
-        "favicon.ico",
-        mimetype="image/vnd.microsoft.icon"
+        "favicon.ico", mimetype="image/vnd.microsoft.icon"
     )
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
-# Employee-facing quote form
-@app.route("/employee/quote", methods=["GET", "POST"])
-def employee_quote():
-    quote_text = None
-    if request.method == "POST":
-        customer = request.form.get("customer", "Customer")
-        contact = request.form.get("contact", "")
-        details = request.form.get("details", "")
-        # Here you could insert into your DB
-        quote_text = f"Quote for {customer} ({contact}): Based on '{details}', we estimate $X,XXX."
-    return render_template("employee_quote.html", quote=quote_text)
-@app.route("/employee/history")
-def employee_history():
-    c.execute("SELECT timestamp, customer, contact, details, estimate FROM quotes ORDER BY id DESC")
-    rows = c.fetchall()
-    return render_template("employee_history.html", quotes=rows)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

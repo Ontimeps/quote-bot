@@ -1,6 +1,18 @@
-{% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+ï»¿{% extends "base.html" %}
 {% block content %}
   <h2>Welcome, {{ user }}!</h2>
-  <p>Here’s your admin dashboard.</p>
+  <a href="{{ url_for('admin_logout') }}">Logout</a>
+  <h3>Submitted Employee Quotes</h3>
+  <table>
+    <tr><th>ID</th><th>Name</th><th>Email</th><th>Details</th><th>When</th></tr>
+    {% for id,name,email,details,ts in quotes %}
+      <tr>
+        <td>{{ id }}</td>
+        <td>{{ name }}</td>
+        <td>{{ email }}</td>
+        <td>{{ details }}</td>
+        <td>{{ ts }}</td>
+      </tr>
+    {% endfor %}
+  </table>
 {% endblock %}
