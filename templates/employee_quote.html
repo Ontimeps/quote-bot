@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Employee Quote{% endblock %}
+{% block content %}
+  <h2>Get a Quote</h2>
+  <form method="post">
+    <label>Customer Name:<br>
+      <input name="customer" required>
+    </label><br><br>
+    <label>Contact Info (email/phone):<br>
+      <input name="contact">
+    </label><br><br>
+    <label>Job Details:<br>
+      <textarea name="details" rows="4" required></textarea>
+    </label><br><br>
+    <button type="submit">Generate Quote</button>
+  </form>
+
+  {% if quote %}
+    <hr>
+    <h3>Your Quote:</h3>
+    <p>{{ quote }}</p>
+  {% endif %}
+{% endblock %}

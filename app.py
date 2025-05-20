@@ -81,3 +81,14 @@ def favicon():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
+# Employee-facing quote form
+@app.route("/employee/quote", methods=["GET", "POST"])
+def employee_quote():
+    quote_text = None
+    if request.method == "POST":
+        customer = request.form.get("customer", "Customer")
+        contact = request.form.get("contact", "")
+        details = request.form.get("details", "")
+        # Here you could insert into your DB
+        quote_text = f"Quote for {customer} ({contact}): Based on '{details}', we estimate $X,XXX."
+    return render_template("employee_quote.html", quote=quote_text)
