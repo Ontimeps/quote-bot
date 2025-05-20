@@ -1,10 +1,11 @@
 ﻿{% extends "base.html" %}
+{% block title %}Admin Login{% endblock %}
 {% block content %}
   <h2>Admin Login</h2>
   {% if error %}<p class="error">{{ error }}</p>{% endif %}
-  <form action="{{ url_for('admin_authenticate') }}" method="post">
-    <input name="username" placeholder="Username" required><br>
-    <input name="password" type="password" placeholder="Password" required><br>
+  <form action="{{ url_for("admin_authenticate") }}" method="post">
+    <input name="username" placeholder="Username" required><br><br>
+    <input name="password" type="password" placeholder="Password" required><br><br>
     <button type="submit">Login</button>
   </form>
 {% endblock %}

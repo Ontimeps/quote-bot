@@ -1,10 +1,14 @@
 ﻿{% extends "base.html" %}
+{% block title %}Get a Quote{% endblock %}
 {% block content %}
-  <h2>Employee Quote Request</h2>
+  <h2>Employee Quote</h2>
   <form method="post">
-    <input name="name" placeholder="Your Name" required><br>
-    <input name="email" type="email" placeholder="Email" required><br>
-    <textarea name="details" placeholder="Quote Details" required></textarea><br>
-    <button type="submit">Submit</button>
+    <input name="customer" placeholder="Customer Name" required><br><br>
+    <input name="contact" placeholder="Contact Info"><br><br>
+    <textarea name="details" rows="4" placeholder="Job Details" required></textarea><br><br>
+    <button type="submit">Generate Quote</button>
   </form>
+  {% if quote %}
+    <hr><h3>Your Quote:</h3><p>{{ quote }}</p>
+  {% endif %}
 {% endblock %}

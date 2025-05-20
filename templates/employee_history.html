@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% block title %}Quote History{% endblock %}
 {% block content %}
   <h2>Quote History</h2>
@@ -6,11 +6,7 @@
     <tr><th>Date</th><th>Customer</th><th>Contact</th><th>Details</th><th>Estimate</th></tr>
     {% for ts, customer, contact, details, estimate in quotes %}
     <tr>
-      <td>{{ ts }}</td>
-      <td>{{ customer }}</td>
-      <td>{{ contact }}</td>
-      <td>{{ details }}</td>
-      <td>{{ estimate }}</td>
+      <td>{{ ts }}</td><td>{{ customer }}</td><td>{{ contact }}</td><td>{{ details }}</td><td>{{ estimate }}</td>
     </tr>
     {% endfor %}
   </table>

@@ -1,5 +1,6 @@
 ﻿{% extends "base.html" %}
+{% block title %}Home{% endblock %}
 {% block content %}
-  <h2>Welcome!</h2>
-  <p>Our service is running. Try the API or <a href="{{ url_for('employee_quote') }}">submit an employee quote request</a>.</p>
+  <h2>Welcome to Quote Bot</h2>
+  <p><a href="{{ url_for("employee_quote") }}">Get a Quote</a> | <a href="{{ url_for("employee_history") }}">Quote History</a></p>
 {% endblock %}

@@ -1,18 +1,13 @@
 ﻿{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
 {% block content %}
-  <h2>Welcome, {{ user }}!</h2>
-  <a href="{{ url_for('admin_logout') }}">Logout</a>
-  <h3>Submitted Employee Quotes</h3>
+  <h2>Admin Dashboard</h2>
   <table>
-    <tr><th>ID</th><th>Name</th><th>Email</th><th>Details</th><th>When</th></tr>
-    {% for id,name,email,details,ts in quotes %}
-      <tr>
-        <td>{{ id }}</td>
-        <td>{{ name }}</td>
-        <td>{{ email }}</td>
-        <td>{{ details }}</td>
-        <td>{{ ts }}</td>
-      </tr>
+    <tr><th>ID</th><th>Customer</th><th>Contact</th><th>Details</th><th>Estimate</th><th>When</th></tr>
+    {% for id, customer, contact, details, estimate, ts in quotes %}
+    <tr>
+      <td>{{ id }}</td><td>{{ customer }}</td><td>{{ contact }}</td><td>{{ details }}</td><td>{{ estimate }}</td><td>{{ ts }}</td>
+    </tr>
     {% endfor %}
   </table>
 {% endblock %}
