@@ -1,4 +1,4 @@
-import os
+ï»¿import os
 import json
 import random
 from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for, session
@@ -22,11 +22,11 @@ def load_users():
         return json.load(f)
 
 quotes = [
-    "Your limitation—it’s only your imagination.",
+    "Your limitation - it's only your imagination.",
     "Push yourself, because no one else is going to do it for you.",
     "Great things never come from comfort zones.",
     "Dream it. Wish it. Do it.",
-    "Success doesn’t just find you. You have to go out and get it."
+    "Success doesn't just find you. You have to go out and get it."
 ]
 
 @app.route("/")
