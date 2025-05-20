@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS quotes (
 )
 "@)
 conn.commit()
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash`r`nimport openai`r`n# Configure OpenAI API key`r`nopenai.api_key = os.getenv("OPENAI_API_KEY")
 
 load_dotenv()
 app = Flask(__name__)
