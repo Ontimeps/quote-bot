@@ -9,6 +9,7 @@ from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 import openai
+import shopvox
 
 # Configure OpenAI
 load_dotenv()
